@@ -67,7 +67,7 @@ const AppSidebarContent = () => {
 
 export const AppLayout = ({ children }: AppLayoutProps) => {
   return (
-    <SidebarProvider defaultCollapsed={false}>
+    <SidebarProvider>
       <header className="h-12 flex items-center border-b">
         <SidebarTrigger className="ml-2" />
       </header>
@@ -82,3 +82,4 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
     </SidebarProvider>
   );
 };
+
