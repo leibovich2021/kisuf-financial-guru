@@ -29,7 +29,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { categories } from "@/data/mockData";
-import { v4 as uuidv4 } from "uuid";
 
 const formSchema = z.object({
   amount: z.coerce.number().positive({ message: "הסכום חייב להיות חיובי" }),
@@ -63,7 +62,7 @@ const TransactionForm = ({ onAddTransaction }: TransactionFormProps) => {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const transaction = {
-      id: uuidv4(),
+      id: Date.now().toString(), // Simple ID generation using timestamp instead of uuid
       ...values,
     };
     
