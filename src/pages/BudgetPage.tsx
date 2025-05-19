@@ -41,7 +41,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
-import { v4 as uuidv4 } from "uuid";
+// Removed uuid import
 
 const formSchema = z.object({
   category: z.string().nonempty({ message: "יש לבחור קטגוריה" }),
@@ -70,7 +70,7 @@ const BudgetPage = () => {
 
   const handleAddBudget = (values: z.infer<typeof formSchema>) => {
     const newBudget: Budget = {
-      id: uuidv4(),
+      id: Date.now().toString(), // Using timestamp instead of uuid for unique ID
       category: values.category,
       amount: values.amount,
       spent: 0,
