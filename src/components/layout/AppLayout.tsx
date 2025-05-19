@@ -20,8 +20,9 @@ interface AppLayoutProps {
   children: ReactNode;
 }
 
-const SidebarContent = () => {
-  const { collapsed } = useSidebar();
+const AppSidebarContent = () => {
+  const { state } = useSidebar();
+  const collapsed = state === "collapsed";
   const location = useLocation();
   
   const menuItems = [
@@ -37,7 +38,7 @@ const SidebarContent = () => {
     isActive ? "bg-muted text-primary font-medium" : "hover:bg-muted/50";
   
   return (
-    <Sidebar className={collapsed ? "w-14" : "w-60"} collapsible>
+    <Sidebar className={collapsed ? "w-14" : "w-60"} collapsible="offcanvas">
       <SidebarTrigger className="m-2 self-end" />
       <SidebarContent>
         <div className="flex h-14 items-center px-4 font-semibold">
@@ -66,13 +67,13 @@ const SidebarContent = () => {
 
 export const AppLayout = ({ children }: AppLayoutProps) => {
   return (
-    <SidebarProvider collapsedWidth={56}>
+    <SidebarProvider defaultCollapsed={false}>
       <header className="h-12 flex items-center border-b">
         <SidebarTrigger className="ml-2" />
       </header>
       
       <div className="flex min-h-screen w-full">
-        <SidebarContent />
+        <AppSidebarContent />
         
         <main className="flex-1 overflow-y-auto p-4">
           {children}
