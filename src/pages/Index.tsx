@@ -1,14 +1,74 @@
-// Update this page (the content is just a fallback if you fail to update the page)
 
-const Index = () => {
+import { useState } from "react";
+import { PageHeader } from "@/components/ui/page-header";
+import SummaryCard from "@/components/dashboard/SummaryCard";
+import RecentTransactions from "@/components/dashboard/RecentTransactions";
+import ExpensesByCategory from "@/components/dashboard/ExpensesByCategory";
+import BudgetProgress from "@/components/dashboard/BudgetProgress";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { transactions as initialTransactions, budgets as initialBudgets } from "@/data/mockData";
+import { calculateSummary, getRecentTransactions, getBudgetStatus } from "@/utils/financeUtils";
+import { Transaction } from "@/types";
+import TransactionForm from "@/components/transactions/TransactionForm";
+import { Wallet, CreditCard, ArrowUp, ArrowDown } from "lucide-react";
+
+const DashboardPage = () => {
+  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
+  const [budgets, setBudgets] = useState(initialBudgets);
+  
+  const summary = calculateSummary(transactions);
+  const recentTransactions = getRecentTransactions(transactions);
+  const budgetStatus = getBudgetStatus(budgets, transactions);
+  
+  const handleAddTransaction = (newTransaction: Transaction) => {
+    setTransactions([...transactions, newTransaction]);
+  };
+  
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <AppLayout>
+      <PageHeader
+        heading="לוח מחוונים"
+        subheading="סקירה כללית של המצב הכלכלי שלך"
+      >
+        <TransactionForm onAddTransaction={handleAddTransaction} />
+      </PageHeader>
+      
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-4 mt-6">
+        <SummaryCard
+          title="סך הכנסות"
+          amount={summary.totalIncome}
+          type="income"
+          icon={<ArrowDown />}
+        />
+        <SummaryCard
+          title="סך הוצאות"
+          amount={summary.totalExpense}
+          type="expense"
+          icon={<ArrowUp />}
+        />
+        <SummaryCard
+          title="חסכונות"
+          amount={summary.totalSaved}
+          type="saving"
+          icon={<Wallet />}
+        />
+        <SummaryCard
+          title="חיוב אשראי"
+          amount={summary.creditDebt}
+          type="expense"
+          icon={<CreditCard />}
+        />
       </div>
-    </div>
+      
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-3 mb-4">
+        <RecentTransactions transactions={recentTransactions} />
+        <div className="space-y-4">
+          <ExpensesByCategory transactions={transactions} />
+          <BudgetProgress budgets={budgetStatus} />
+        </div>
+      </div>
+    </AppLayout>
   );
 };
 
-export default Index;
+export default DashboardPage;
