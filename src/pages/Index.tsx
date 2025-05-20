@@ -33,7 +33,7 @@ const DashboardPage = () => {
         <TransactionForm onAddTransaction={handleAddTransaction} />
       </PageHeader>
       
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-4 mt-6">
+      <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-6 mt-6 animate-fade-in">
         <SummaryCard
           title="סך הכנסות"
           amount={summary.totalIncome}
@@ -60,9 +60,9 @@ const DashboardPage = () => {
         />
       </div>
       
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-3 mb-4">
+      <div className="grid gap-5 grid-cols-1 lg:grid-cols-3 mb-6 animate-fade-in">
         <RecentTransactions transactions={recentTransactions} />
-        <div className="space-y-4">
+        <div className="space-y-5">
           <ExpensesByCategory transactions={transactions} />
           <BudgetProgress budgets={budgetStatus} />
         </div>

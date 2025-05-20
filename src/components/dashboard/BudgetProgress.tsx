@@ -10,24 +10,34 @@ interface BudgetProgressProps {
 
 const BudgetProgress: React.FC<BudgetProgressProps> = ({ budgets }) => {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>מעקב תקציב</CardTitle>
+    <Card className="shadow-sm border-0">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-lg text-primary">מעקב תקציב</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-5">
         {budgets.map((budget) => {
           const percentage = Math.min(Math.round((budget.spent / budget.amount) * 100), 100);
           const remaining = budget.amount - budget.spent;
           
           return (
-            <div key={budget.id} className="space-y-1">
-              <div className="flex justify-between text-sm">
+            <div key={budget.id} className="space-y-2">
+              <div className="flex justify-between text-sm font-medium">
                 <span>{getCategoryNameById(budget.category)}</span>
-                <span>
+                <span className="text-muted-foreground">
                   {formatCurrency(budget.spent)} / {formatCurrency(budget.amount)}
                 </span>
               </div>
-              <Progress value={percentage} className="h-2" />
+              <Progress 
+                value={percentage} 
+                className="h-2" 
+                indicatorClassName={
+                  percentage >= 90 
+                    ? "bg-money-expense" 
+                    : percentage >= 75 
+                      ? "bg-orange-500" 
+                      : "bg-money-saving"
+                }
+              />
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>{percentage}% נוצל</span>
                 <span>נותר: {formatCurrency(remaining)}</span>

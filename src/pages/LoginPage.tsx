@@ -50,40 +50,43 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">התחברות למערכת</CardTitle>
-          <CardDescription>הזן את פרטי הכניסה שלך כדי להתחבר למערכת ניהול הכספים</CardDescription>
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-accent/30 to-background p-4">
+      <Card className="w-full max-w-md animate-fade-in shadow-lg border-accent/20">
+        <CardHeader className="text-center space-y-2">
+          <div className="mx-auto bg-primary/10 p-3 rounded-full w-16 h-16 flex items-center justify-center">
+            <User className="h-8 w-8 text-primary" />
+          </div>
+          <CardTitle className="text-2xl font-bold text-primary">התחברות למערכת</CardTitle>
+          <CardDescription className="text-base">הזן את פרטי הכניסה שלך כדי להתחבר למערכת ניהול הכספים</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="username">שם משתמש</Label>
+              <Label htmlFor="username" className="text-base">שם משתמש</Label>
               <div className="relative">
-                <User className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
                 <Input
                   id="username"
                   placeholder="הכנס שם משתמש"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 h-12 text-base"
                   required
                 />
               </div>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password">סיסמה</Label>
+              <Label htmlFor="password" className="text-base">סיסמה</Label>
               <div className="relative">
-                <LockKeyhole className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                <LockKeyhole className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
                 <Input
                   id="password"
                   type="password"
                   placeholder="הכנס סיסמה"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 h-12 text-base"
                   required
                 />
               </div>
@@ -91,10 +94,10 @@ const LoginPage = () => {
             
             <Button 
               type="submit" 
-              className="w-full mt-6" 
+              className="w-full mt-6 h-12 text-base font-medium shadow-md"
               disabled={isLoading}
             >
-              {isLoading ? "מתחבר..." : "התחבר"}
+              {isLoading ? "מתחבר..." : "התחבר למערכת"}
             </Button>
           </form>
         </CardContent>

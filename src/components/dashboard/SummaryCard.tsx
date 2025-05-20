@@ -23,11 +23,24 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ title, amount, type = "defaul
     }
   };
 
+  const getGradientByType = () => {
+    switch (type) {
+      case "income":
+        return "from-green-50 to-green-100/50 dark:from-green-950/20 dark:to-green-900/10";
+      case "expense":
+        return "from-red-50 to-red-100/50 dark:from-red-950/20 dark:to-red-900/10";
+      case "saving":
+        return "from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10";
+      default:
+        return "from-accent/30 to-accent/10";
+    }
+  };
+
   return (
-    <Card>
+    <Card className={`bg-gradient-to-br ${getGradientByType()} shadow-sm hover:shadow-md transition-shadow card-hover border-0`}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        {icon && <div className="h-4 w-4 text-muted-foreground">{icon}</div>}
+        <CardTitle className="text-base font-medium">{title}</CardTitle>
+        {icon && <div className={`h-7 w-7 p-1 rounded-full bg-background/80 ${getColorByType()}`}>{icon}</div>}
       </CardHeader>
       <CardContent>
         <div className={`text-2xl font-bold ${getColorByType()}`}>

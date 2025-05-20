@@ -8,7 +8,7 @@ interface ExpensesByCategoryProps {
   transactions: Transaction[];
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A28DFF', '#FF6B6B', '#4ECDC4'];
+const COLORS = ['#8b5cf6', '#ec4899', '#f97316', '#06b6d4', '#10b981', '#a855f7', '#f43f5e', '#84cc16'];
 
 const ExpensesByCategory: React.FC<ExpensesByCategoryProps> = ({ transactions }) => {
   const expenseTransactions = transactions.filter(t => t.type === "expense");
@@ -21,12 +21,12 @@ const ExpensesByCategory: React.FC<ExpensesByCategoryProps> = ({ transactions })
   }));
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>הוצאות לפי קטגוריה</CardTitle>
+    <Card className="shadow-sm border-0">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-lg text-primary">הוצאות לפי קטגוריה</CardTitle>
       </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
+      <CardContent className="px-2">
+        <ResponsiveContainer width="100%" height={280}>
           <PieChart>
             <Pie
               data={data}
