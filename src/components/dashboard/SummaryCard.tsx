@@ -37,10 +37,10 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ title, amount, type = "defaul
   };
 
   return (
-    <Card className={`bg-gradient-to-br ${getGradientByType()} shadow-sm hover:shadow-md transition-shadow card-hover border-0`}>
+    <Card className={`bg-gradient-to-br ${getGradientByType()} shadow-md hover:shadow-lg transition-all duration-300 rounded-xl border-0 overflow-hidden card-hover`}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-base font-medium">{title}</CardTitle>
-        {icon && <div className={`h-7 w-7 p-1 rounded-full bg-background/80 ${getColorByType()}`}>{icon}</div>}
+        <CardTitle className="text-base font-semibold">{title}</CardTitle>
+        {icon && <div className={`h-10 w-10 p-1.5 rounded-full bg-white/90 dark:bg-background/80 shadow-sm ${getColorByType()}`}>{icon}</div>}
       </CardHeader>
       <CardContent>
         <div className={`text-2xl font-bold ${getColorByType()}`}>

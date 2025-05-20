@@ -11,25 +11,17 @@ interface BudgetProgressProps {
 
 const BudgetProgress: React.FC<BudgetProgressProps> = ({ budgets }) => {
   return (
-    <Card className="shadow-sm border-0">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg text-primary">מעקב תקציב</CardTitle>
+    <Card className="shadow-md border-0 rounded-xl bg-gradient-to-br from-white to-accent/10 dark:from-card dark:to-background hover:shadow-lg transition-all">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg font-semibold text-primary">מעקב תקציב</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-5">
+      <CardContent className="space-y-5 p-5">
         {budgets.map((budget) => {
           const percentage = Math.min(Math.round((budget.spent / budget.amount) * 100), 100);
           const remaining = budget.amount - budget.spent;
           
-          // הגדרת הצבע לפי אחוז השימוש בתקציב
-          const indicatorColor = 
-            percentage >= 90 
-              ? "bg-money-expense" 
-              : percentage >= 75 
-                ? "bg-orange-500" 
-                : "bg-money-saving";
-          
           return (
-            <div key={budget.id} className="space-y-2">
+            <div key={budget.id} className="space-y-2 animate-fade-in">
               <div className="flex justify-between text-sm font-medium">
                 <span>{getCategoryNameById(budget.category)}</span>
                 <span className="text-muted-foreground">
@@ -38,16 +30,15 @@ const BudgetProgress: React.FC<BudgetProgressProps> = ({ budgets }) => {
               </div>
               <Progress 
                 value={percentage} 
-                // שימוש ב-cn כדי להחליף את הצבע של ה-indicator
-                className={cn("h-2", {
-                  "[&>div]:bg-money-expense": percentage >= 90,
-                  "[&>div]:bg-orange-500": percentage >= 75 && percentage < 90,
-                  "[&>div]:bg-money-saving": percentage < 75
+                className={cn("h-3 rounded-full", {
+                  "[&>div]:bg-money-expense [&>div]:rounded-full": percentage >= 90,
+                  "[&>div]:bg-orange-500 [&>div]:rounded-full": percentage >= 75 && percentage < 90,
+                  "[&>div]:bg-money-saving [&>div]:rounded-full": percentage < 75
                 })}
               />
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>{percentage}% נוצל</span>
-                <span>נותר: {formatCurrency(remaining)}</span>
+              <div className="flex justify-between text-xs">
+                <span className="font-medium">{percentage}% נוצל</span>
+                <span className="text-muted-foreground">נותר: {formatCurrency(remaining)}</span>
               </div>
             </div>
           );
