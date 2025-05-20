@@ -1,6 +1,6 @@
 
 import { ReactNode, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -14,7 +14,9 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Calculator, Wallet, BarChart3, Settings, CreditCard } from "lucide-react";
+import { Calculator, Wallet, BarChart3, Settings, CreditCard, LogOut } from "lucide-react";
+import { Button } from "../ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -24,9 +26,11 @@ const AppSidebarContent = () => {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   
   const menuItems = [
-    { path: "/", name: "לוח מחוונים", icon: BarChart3 },
+    { path: "/dashboard", name: "לוח מחוונים", icon: BarChart3 },
     { path: "/transactions", name: "עסקאות", icon: Wallet },
     { path: "/budget", name: "תקציב", icon: Calculator },
     { path: "/credit", name: "אשראי", icon: CreditCard },
@@ -34,8 +38,20 @@ const AppSidebarContent = () => {
   ];
   
   const isActive = (path: string) => location.pathname === path;
-  const getNavCls = ({ isActive }: { isActive: boolean }) =>
-    isActive ? "bg-muted text-primary font-medium" : "hover:bg-muted/50";
+  
+  const handleLogout = () => {
+    // מחיקת פרטי ההתחברות
+    localStorage.removeItem("isLoggedIn");
+    
+    // הצגת הודעה
+    toast({
+      title: "התנתקת מהמערכת",
+      description: "מועבר לדף ההתחברות",
+    });
+    
+    // ניווט לדף ההתחברות
+    navigate("/");
+  };
   
   return (
     <Sidebar className={collapsed ? "w-14" : "w-60"} collapsible="offcanvas">
@@ -57,6 +73,19 @@ const AppSidebarContent = () => {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Button 
+                    variant="ghost"
+                    className="w-full flex justify-start items-center gap-2 rounded-md p-2 hover:bg-muted/50 text-destructive hover:text-destructive"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="h-5 w-5" />
+                    {!collapsed && <span>התנתקות</span>}
+                  </Button>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -82,4 +111,3 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
     </SidebarProvider>
   );
 };
-
