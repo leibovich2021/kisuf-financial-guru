@@ -38,7 +38,6 @@ const BudgetProgress: React.FC<BudgetProgressProps> = ({ budgets }) => {
               </div>
               <Progress 
                 value={percentage} 
-                className="h-2" 
                 // שימוש ב-cn כדי להחליף את הצבע של ה-indicator
                 className={cn("h-2", {
                   "[&>div]:bg-money-expense": percentage >= 90,
