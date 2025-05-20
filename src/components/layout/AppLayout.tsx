@@ -65,7 +65,7 @@ const AppSidebarContent = () => {
             <Wallet className="h-6 w-6 text-primary" />
           )}
         </div>
-        <SidebarGroup defaultOpen>
+        <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
