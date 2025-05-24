@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { FinancialProvider } from "@/contexts/FinancialContext";
 import LoginPage from "./pages/LoginPage";
 import UserSelectionPage from "./pages/UserSelectionPage";
 import Index from "./pages/Index";
@@ -53,59 +54,61 @@ const App = () => {
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            {/* הפניה מהדף הבית לבחירת משתמש */}
-            <Route path="/" element={<Navigate to="/users" replace />} />
-            
-            {/* דף בחירת משתמש */}
-            <Route path="/users" element={<UserSelectionPage />} />
-            
-            {/* דף התחברות ישן - נשאיר לתאימות אחורה */}
-            <Route path="/login" element={<Navigate to="/users" replace />} />
-            
-            {/* דפים מוגנים */}
-            <Route 
-              path="/dashboard" 
-              element={
-                <ProtectedRoute>
-                  <Index />
-                </ProtectedRoute>
-              } 
-            />
-            <Route
-              path="/transactions"
-              element={
-                <ProtectedRoute>
-                  <TransactionsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/budget"
-              element={
-                <ProtectedRoute>
-                  <BudgetPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/credit"
-              element={
-                <ProtectedRoute>
-                  <CreditPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute>
-                  <SettingsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <FinancialProvider>
+            <Routes>
+              {/* הפניה מהדף הבית לבחירת משתמש */}
+              <Route path="/" element={<Navigate to="/users" replace />} />
+              
+              {/* דף בחירת משתמש */}
+              <Route path="/users" element={<UserSelectionPage />} />
+              
+              {/* דף התחברות ישן - נשאיר לתאימות אחורה */}
+              <Route path="/login" element={<Navigate to="/users" replace />} />
+              
+              {/* דפים מוגנים */}
+              <Route 
+                path="/dashboard" 
+                element={
+                  <ProtectedRoute>
+                    <Index />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route
+                path="/transactions"
+                element={
+                  <ProtectedRoute>
+                    <TransactionsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/budget"
+                element={
+                  <ProtectedRoute>
+                    <BudgetPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/credit"
+                element={
+                  <ProtectedRoute>
+                    <CreditPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <SettingsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </FinancialProvider>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
