@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { getBudgetStatus } from "@/utils/financeUtils";
@@ -11,7 +10,6 @@ import { BudgetEmptyState } from "@/components/budget/BudgetEmptyState";
 
 const BudgetPage = () => {
   const { budgets, transactions } = useFinancialContext();
-  const [open, setOpen] = useState(false);
 
   const budgetStatus = getBudgetStatus(budgets, transactions);
 
@@ -25,7 +23,7 @@ const BudgetPage = () => {
         {budgetStatus.length > 0 ? (
           <BudgetTable budgets={budgetStatus} />
         ) : (
-          <BudgetEmptyState onAddBudget={() => setOpen(true)} />
+          <BudgetEmptyState />
         )}
       </div>
     </AppLayout>
