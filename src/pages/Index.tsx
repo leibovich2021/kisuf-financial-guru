@@ -9,6 +9,7 @@ import StatisticsCard from "@/components/dashboard/StatisticsCard";
 import QuickActions from "@/components/dashboard/QuickActions";
 import FinancialInsights from "@/components/dashboard/FinancialInsights";
 import CashPaymentSummary from "@/components/dashboard/CashPaymentSummary";
+import FinancialManagement from "@/components/dashboard/FinancialManagement";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { transactions as initialTransactions, budgets as initialBudgets } from "@/data/mockData";
 import { calculateSummary, getRecentTransactions, getBudgetStatus, getCashPaymentSummary } from "@/utils/financeUtils";
@@ -30,12 +31,15 @@ const DashboardPage = () => {
   };
   
   const openTransactionForm = () => {
-    // This will trigger the TransactionForm dialog to open
-    // The form is already in the PageHeader, we just need to programmatically open it
     const addButton = document.querySelector('[data-testid="add-transaction-button"]');
     if (addButton) {
       (addButton as HTMLButtonElement).click();
     }
+  };
+
+  const handleUpdateFinancials = (income: number, expenses: number, savings: number) => {
+    // This would typically update your state or send to a backend
+    console.log("Updated financials:", { income, expenses, savings });
   };
   
   return (
@@ -74,6 +78,16 @@ const DashboardPage = () => {
           amount={summary.creditDebt}
           type="expense"
           icon={<CreditCard />}
+        />
+      </div>
+
+      {/* ניהול פיננסי מתקדם */}
+      <div className="mb-8 animate-fade-in">
+        <FinancialManagement
+          currentIncome={summary.totalIncome}
+          currentExpenses={summary.totalExpense}
+          currentSavings={summary.totalSaved}
+          onUpdateFinancials={handleUpdateFinancials}
         />
       </div>
 
