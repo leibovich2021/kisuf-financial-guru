@@ -10,21 +10,28 @@ import QuickActions from "@/components/dashboard/QuickActions";
 import FinancialInsights from "@/components/dashboard/FinancialInsights";
 import CashPaymentSummary from "@/components/dashboard/CashPaymentSummary";
 import FinancialManagement from "@/components/dashboard/FinancialManagement";
+import CalendarManager from "@/components/dashboard/CalendarManager";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { transactions as initialTransactions, budgets as initialBudgets } from "@/data/mockData";
 import { calculateSummary, getRecentTransactions, getBudgetStatus, getCashPaymentSummary } from "@/utils/financeUtils";
 import { Transaction } from "@/types";
+import { MonthlyData } from "@/types/calendar";
 import TransactionForm from "@/components/transactions/TransactionForm";
 import { Wallet, CreditCard, ArrowUp, ArrowDown, Sparkles } from "lucide-react";
 
 const DashboardPage = () => {
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
   const [budgets, setBudgets] = useState(initialBudgets);
+  const [currentMonthData, setCurrentMonthData] = useState<MonthlyData | null>(null);
   
-  const summary = calculateSummary(transactions);
-  const recentTransactions = getRecentTransactions(transactions);
-  const budgetStatus = getBudgetStatus(budgets, transactions);
-  const cashSummary = getCashPaymentSummary(transactions);
+  // השתמש בנתונים של החודש הנוכחי אם זמינים, אחרת השתמש בנתונים הכלליים
+  const activeTransactions = currentMonthData?.transactions || transactions;
+  const activeBudgets = currentMonthData?.budgets || budgets;
+  
+  const summary = currentMonthData?.summary || calculateSummary(activeTransactions);
+  const recentTransactions = getRecentTransactions(activeTransactions);
+  const budgetStatus = getBudgetStatus(activeBudgets, activeTransactions);
+  const cashSummary = getCashPaymentSummary(activeTransactions);
   
   const handleAddTransaction = (newTransaction: Transaction) => {
     setTransactions([...transactions, newTransaction]);
@@ -38,8 +45,12 @@ const DashboardPage = () => {
   };
 
   const handleUpdateFinancials = (income: number, expenses: number, savings: number) => {
-    // This would typically update your state or send to a backend
     console.log("Updated financials:", { income, expenses, savings });
+  };
+
+  const handleMonthChange = (month: string, monthlyData: MonthlyData) => {
+    setCurrentMonthData(monthlyData);
+    console.log("Changed to month:", month, monthlyData);
   };
   
   return (
@@ -52,6 +63,15 @@ const DashboardPage = () => {
           <TransactionForm onAddTransaction={handleAddTransaction} />
         </div>
       </PageHeader>
+
+      {/* מנהל לוח שנה */}
+      <div className="mb-8 animate-fade-in">
+        <CalendarManager
+          transactions={transactions}
+          budgets={budgets}
+          onMonthChange={handleMonthChange}
+        />
+      </div>
       
       {/* כרטיסי סיכום ראשיים */}
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-8 mt-6 animate-fade-in">
@@ -138,7 +158,7 @@ const DashboardPage = () => {
             averageCashPayment={cashSummary.averageCashPayment}
             topCashCategories={cashSummary.topCashCategories}
           />
-          <ExpensesByCategory transactions={transactions} />
+          <ExpensesByCategory transactions={activeTransactions} />
           <BudgetProgress budgets={budgetStatus} />
         </div>
       </div>
