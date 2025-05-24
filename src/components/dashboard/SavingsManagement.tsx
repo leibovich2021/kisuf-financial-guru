@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,10 +18,11 @@ import {
 import { formatCurrency } from "@/utils/financeUtils";
 import { useToast } from "@/hooks/use-toast";
 import { useFinancialContext } from "@/contexts/FinancialContext";
+import { Transaction } from "@/types";
 
 interface SavingsManagementProps {
   currentSavings: number;
-  onAddSavingsTransaction: (transaction: any) => void;
+  onAddSavingsTransaction: (transaction: Transaction) => void;
 }
 
 const SavingsManagement = ({ currentSavings }: SavingsManagementProps) => {
