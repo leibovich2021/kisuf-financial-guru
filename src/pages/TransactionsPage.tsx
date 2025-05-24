@@ -26,15 +26,40 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Trash2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const TransactionsPage = () => {
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
   const [filter, setFilter] = useState<string>("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [paymentFilter, setPaymentFilter] = useState<string>("all");
+  const { toast } = useToast();
   
   const handleAddTransaction = (newTransaction: Transaction) => {
     setTransactions([...transactions, newTransaction]);
+  };
+
+  const handleDeleteTransaction = (transactionId: string) => {
+    const transaction = transactions.find(t => t.id === transactionId);
+    setTransactions(prev => prev.filter(t => t.id !== transactionId));
+    
+    toast({
+      title: "עסקה נמחקה",
+      description: `העסקה "${transaction?.description}" נמחקה בהצלחה`,
+    });
   };
   
   const filteredTransactions = transactions.filter(transaction => {
@@ -107,12 +132,13 @@ const TransactionsPage = () => {
                   <TableHead>אמצעי תשלום</TableHead>
                   <TableHead>סוג</TableHead>
                   <TableHead className="text-left">סכום</TableHead>
+                  <TableHead className="text-center">פעולות</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredTransactions.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8">
+                    <TableCell colSpan={7} className="text-center py-8">
                       לא נמצאו עסקאות
                     </TableCell>
                   </TableRow>
@@ -133,6 +159,37 @@ const TransactionsPage = () => {
                       </TableCell>
                       <TableCell className={`text-left ${transaction.type === "income" ? "text-money-income" : "text-money-expense"}`}>
                         {transaction.type === "income" ? "+" : "-"}{formatCurrency(transaction.amount)}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>מחיקת עסקה</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                האם אתה בטוח שברצונך למחוק את העסקה "{transaction.description}"?
+                                פעולה זו לא ניתנת לביטול.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>ביטול</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDeleteTransaction(transaction.id)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                מחק
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </TableCell>
                     </TableRow>
                   ))
