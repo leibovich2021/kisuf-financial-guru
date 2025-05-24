@@ -33,9 +33,16 @@ export interface FinancialContextType {
   settings: FinancialSettings;
   savingsGoals: SavingsGoal[];
   
-  // פעולות עדכון
+  // פעולות עדכון טרנזקציות
   addTransaction: (transaction: Transaction) => void;
   deleteTransaction: (id: string) => void;
+  
+  // פעולות עדכון תקציבים
+  addBudget: (budget: Omit<Budget, 'id'>) => void;
+  updateBudget: (id: string, updates: Partial<Budget>) => void;
+  deleteBudget: (id: string) => void;
+  
+  // פעולות כלליות
   updateSettings: (newSettings: Partial<FinancialSettings>) => void;
   addSavingsGoal: (goal: Omit<SavingsGoal, 'id'>) => void;
   updateSavingsGoal: (id: string, updates: Partial<SavingsGoal>) => void;
