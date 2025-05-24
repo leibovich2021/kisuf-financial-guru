@@ -11,7 +11,7 @@ import { Users, UserPlus, LogIn } from "lucide-react";
 import { userService } from "@/services/userService";
 
 const UserSelectionPage = () => {
-  const [selectedUser, setSelectedUser] = useState("");
+  const [loginUsername, setLoginUsername] = useState("");
   const [password, setPassword] = useState("");
   const [newUsername, setNewUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -27,7 +27,7 @@ const UserSelectionPage = () => {
     setIsLoading(true);
 
     setTimeout(() => {
-      const user = userService.login(selectedUser, password);
+      const user = userService.login(loginUsername, password);
       
       if (user) {
         toast({
@@ -97,48 +97,34 @@ const UserSelectionPage = () => {
             </TabsList>
             
             <TabsContent value="login" className="space-y-4">
-              {users.length > 0 ? (
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="user-select">בחר משתמש</Label>
-                    <select
-                      id="user-select"
-                      value={selectedUser}
-                      onChange={(e) => setSelectedUser(e.target.value)}
-                      className="w-full p-2 border border-input rounded-md bg-background"
-                      required
-                    >
-                      <option value="">בחר משתמש...</option>
-                      {users.map((user) => (
-                        <option key={user.id} value={user.username}>
-                          {user.displayName}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="password">סיסמה</Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="הכנס סיסמה"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                  
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? "מתחבר..." : "התחבר"}
-                  </Button>
-                </form>
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground mb-4">אין משתמשים רשומים במערכת</p>
-                  <p className="text-sm">עבור לכרטיסיית "משתמש חדש" כדי ליצור משתמש ראשון</p>
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="username">שם משתמש</Label>
+                  <Input
+                    id="username"
+                    placeholder="הכנס שם משתמש"
+                    value={loginUsername}
+                    onChange={(e) => setLoginUsername(e.target.value)}
+                    required
+                  />
                 </div>
-              )}
+                
+                <div className="space-y-2">
+                  <Label htmlFor="password">סיסמה</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="הכנס סיסמה"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "מתחבר..." : "התחבר"}
+                </Button>
+              </form>
             </TabsContent>
             
             <TabsContent value="register" className="space-y-4">
