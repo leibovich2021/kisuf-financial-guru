@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import SummaryCard from "@/components/dashboard/SummaryCard";
@@ -18,6 +19,7 @@ import { MonthlyData } from "@/types/calendar";
 import TransactionForm from "@/components/transactions/TransactionForm";
 import { Wallet, CreditCard, ArrowUp, ArrowDown, Sparkles } from "lucide-react";
 import { userService } from "@/services/userService";
+import { useToast } from "@/hooks/use-toast";
 
 const DashboardPage = () => {
   // קבלת נתוני המשתמש הנוכחי
@@ -27,6 +29,7 @@ const DashboardPage = () => {
   const [transactions, setTransactions] = useState<Transaction[]>(userData.transactions);
   const [budgets, setBudgets] = useState(userData.budgets);
   const [currentMonthData, setCurrentMonthData] = useState<MonthlyData | null>(null);
+  const { toast } = useToast();
   
   // עדכון נתוני המשתמש כאשר יש שינויים
   useEffect(() => {
@@ -65,6 +68,40 @@ const DashboardPage = () => {
         };
       });
     }
+  };
+
+  const handleTransferToSavings = (amount: number) => {
+    if (amount <= 0) return;
+    
+    // יצירת עסקת הוצאה - העברה לחיסכון
+    const transferTransaction: Transaction = {
+      id: Date.now().toString(),
+      amount: amount,
+      category: "saving",
+      description: "העברה לחיסכון",
+      date: new Date().toISOString(),
+      type: "expense",
+      paymentMethod: "bankTransfer"
+    };
+
+    // יצירת עסקת חיסכון
+    const savingTransaction: Transaction = {
+      id: (Date.now() + 1).toString(),
+      amount: amount,
+      category: "saving",
+      description: "חיסכון",
+      date: new Date().toISOString(),
+      type: "income",
+      paymentMethod: "bankTransfer"
+    };
+
+    const updatedTransactions = [...transactions, transferTransaction, savingTransaction];
+    setTransactions(updatedTransactions);
+
+    toast({
+      title: "הועבר לחיסכון",
+      description: `${amount}₪ הועברו לחיסכון בהצלחה`,
+    });
   };
   
   const openTransactionForm = () => {
@@ -110,6 +147,7 @@ const DashboardPage = () => {
           amount={summary.totalIncome}
           type="income"
           icon={<ArrowDown />}
+          onTransferToSavings={handleTransferToSavings}
         />
         <SummaryCard
           title="סך הוצאות"
