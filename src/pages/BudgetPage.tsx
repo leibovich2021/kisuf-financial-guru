@@ -1,11 +1,10 @@
-
 import { useState } from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { budgets as initialBudgets, categories } from "@/data/mockData";
-import { transactions as initialTransactions } from "@/data/mockData";
+import { categories } from "@/data/mockData";
 import { getBudgetStatus, formatCurrency, getCategoryNameById } from "@/utils/financeUtils";
 import { Budget } from "@/types";
+import { useFinancialContext } from "@/contexts/FinancialContext";
 import {
   Card,
   CardContent,
@@ -57,7 +56,7 @@ const formSchema = z.object({
 });
 
 const BudgetPage = () => {
-  const [budgets, setBudgets] = useState(initialBudgets);
+  const { budgets, transactions, addBudget, updateBudget, deleteBudget } = useFinancialContext();
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
 
@@ -69,28 +68,35 @@ const BudgetPage = () => {
     },
   });
 
-  const budgetStatus = getBudgetStatus(budgets, initialTransactions);
+  const budgetStatus = getBudgetStatus(budgets, transactions);
 
   const availableCategories = categories
     .filter(category => category.type === "expense")
     .filter(category => !budgets.some(budget => budget.category === category.id));
 
   const handleAddBudget = (values: z.infer<typeof formSchema>) => {
-    const newBudget: Budget = {
-      id: Date.now().toString(),
+    const newBudget = {
       category: values.category,
       amount: values.amount,
       spent: 0,
       period: values.period,
     };
 
-    setBudgets([...budgets, newBudget]);
+    addBudget(newBudget);
     toast({
       title: "תקציב נוסף בהצלחה",
       description: `תקציב עבור ${getCategoryNameById(values.category)} נוסף`,
     });
     form.reset();
     setOpen(false);
+  };
+
+  const handleDeleteBudget = (budgetId: string) => {
+    deleteBudget(budgetId);
+    toast({
+      title: "תקציב נמחק",
+      description: "התקציב נמחק מהמערכת",
+    });
   };
 
   const getPeriodName = (period: string) => {
@@ -227,6 +233,7 @@ const BudgetPage = () => {
                   <TableHead className="text-right">שימוש</TableHead>
                   <TableHead className="text-right">נותר</TableHead>
                   <TableHead className="text-right">אחוז השימוש</TableHead>
+                  <TableHead className="text-right">פעולות</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -268,6 +275,15 @@ const BudgetPage = () => {
                             {percentage}%
                           </span>
                         </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button 
+                          variant="destructive" 
+                          size="sm"
+                          onClick={() => handleDeleteBudget(budget.id)}
+                        >
+                          מחק
+                        </Button>
                       </TableCell>
                     </TableRow>
                   );
