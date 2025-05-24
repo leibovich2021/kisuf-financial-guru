@@ -1,3 +1,4 @@
+
 import { ReactNode, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -114,13 +115,13 @@ const AppSidebarContent = () => {
 export const AppLayout = ({ children }: AppLayoutProps) => {
   return (
     <SidebarProvider>
-      <div className="min-h-screen w-full bg-background flex">
+      <div className="min-h-screen w-full bg-background flex" dir="rtl">
         <AppSidebarContent />
         
         <div className="flex-1 flex flex-col">
           <header className="h-14 flex items-center border-b border-accent/10 px-4 shadow-sm glass sticky top-0 z-10 backdrop-blur-md bg-white/80 dark:bg-black/50">
             <SidebarTrigger className="ml-3" />
-            <h1 className="text-primary font-bold text-xl">ניהול הכספים שלי</h1>
+            <h1 className="text-primary font-bold text-xl mr-4">ניהול הכספים שלי</h1>
           </header>
           
           <main className="flex-1 overflow-y-auto p-4 md:p-6 page-container">

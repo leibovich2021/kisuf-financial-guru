@@ -33,7 +33,7 @@ const DashboardContent = ({
 }: DashboardContentProps) => {
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="grid gap-6 grid-cols-1 xl:grid-cols-4">
+      <div className="grid gap-6 grid-cols-1 xl:grid-cols-3">
         <div className="xl:col-span-2 space-y-6">
           <RecentTransactions 
             transactions={recentTransactions} 
@@ -51,9 +51,6 @@ const DashboardContent = ({
           />
           <ExpensesByCategory transactions={activeTransactions} />
           <BudgetProgress budgets={budgetStatus} />
-        </div>
-
-        <div className="space-y-6">
           <SavingsManagement 
             currentSavings={currentSavings}
             onAddSavingsTransaction={onAddSavingsTransaction}

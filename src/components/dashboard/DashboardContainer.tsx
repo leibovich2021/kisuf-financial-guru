@@ -5,7 +5,6 @@ import DashboardSummaryCards from "./DashboardSummaryCards";
 import DashboardStatistics from "./DashboardStatistics";
 import DashboardContent from "./DashboardContent";
 import CalendarManager from "./CalendarManager";
-import QuickActions from "./QuickActions";
 import DailyWeeklyBudget from "./DailyWeeklyBudget";
 import { useFinancialContext } from "@/contexts/FinancialContext";
 import { getRecentTransactions, getBudgetStatus, getCashPaymentSummary } from "@/utils/financeUtils";
@@ -89,10 +88,6 @@ const DashboardContainer = () => {
       />
 
       <DashboardStatistics summary={activeSummary} />
-
-      <div className="mb-8 animate-fade-in">
-        <QuickActions onAddTransaction={openTransactionForm} />
-      </div>
       
       <DashboardContent
         recentTransactions={recentTransactions}
