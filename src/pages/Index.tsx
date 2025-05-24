@@ -29,6 +29,15 @@ const DashboardPage = () => {
     setTransactions([...transactions, newTransaction]);
   };
   
+  const openTransactionForm = () => {
+    // This will trigger the TransactionForm dialog to open
+    // The form is already in the PageHeader, we just need to programmatically open it
+    const addButton = document.querySelector('[data-testid="add-transaction-button"]');
+    if (addButton) {
+      (addButton as HTMLButtonElement).click();
+    }
+  };
+  
   return (
     <AppLayout>
       <PageHeader
@@ -98,7 +107,7 @@ const DashboardPage = () => {
 
       {/* פעולות מהירות */}
       <div className="mb-8 animate-fade-in">
-        <QuickActions />
+        <QuickActions onAddTransaction={openTransactionForm} />
       </div>
       
       {/* תוכן ראשי */}
