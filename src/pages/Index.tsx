@@ -1,10 +1,10 @@
+
 import { useState } from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import SummaryCard from "@/components/dashboard/SummaryCard";
 import RecentTransactions from "@/components/dashboard/RecentTransactions";
 import ExpensesByCategory from "@/components/dashboard/ExpensesByCategory";
 import BudgetProgress from "@/components/dashboard/BudgetProgress";
-import PaymentCard from "@/components/dashboard/PaymentCard";
 import StatisticsCard from "@/components/dashboard/StatisticsCard";
 import QuickActions from "@/components/dashboard/QuickActions";
 import FinancialInsights from "@/components/dashboard/FinancialInsights";
@@ -117,7 +117,6 @@ const DashboardPage = () => {
           />
           <ExpensesByCategory transactions={transactions} />
           <BudgetProgress budgets={budgetStatus} />
-          <PaymentCard />
         </div>
       </div>
     </AppLayout>
