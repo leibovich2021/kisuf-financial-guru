@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useMemo } from 'react';
 import { Transaction, Budget } from '@/types';
 import { FinancialSettings, SavingsGoal, FinancialSummary } from '@/types/financial';
@@ -45,14 +46,19 @@ export const useFinancialOperations = () => {
     }
   }, [transactions, budgets, settings, currentUser]);
 
-  // חישוב סיכום אוטומטי
+  // חישוב סיכום אוטומטי - עכשיו מחשב חיסכון אמיתי בלבד
   const summary = useMemo((): FinancialSummary => {
     const totalIncome = transactions
-      .filter(t => t.type === "income")
+      .filter(t => t.type === "income" && t.category !== "saving")
       .reduce((sum, t) => sum + t.amount, 0);
     
     const totalExpense = transactions
       .filter(t => t.type === "expense")
+      .reduce((sum, t) => sum + t.amount, 0);
+    
+    // חיסכון אמיתי - רק טרנזקציות שהוגדרו כחיסכון
+    const totalSaved = transactions
+      .filter(t => t.category === "saving" || (t.type === "income" && t.category === "saving"))
       .reduce((sum, t) => sum + t.amount, 0);
     
     const creditDebt = transactions
@@ -62,7 +68,7 @@ export const useFinancialOperations = () => {
     return {
       totalIncome,
       totalExpense,
-      totalSaved: totalIncome - totalExpense,
+      totalSaved, // עכשיו זה חיסכון אמיתי
       creditDebt
     };
   }, [transactions]);
@@ -132,12 +138,12 @@ export const useFinancialOperations = () => {
     const transferTransaction: Transaction = {
       id: Date.now().toString(),
       amount: amount,
-      category: "saving",
+      category: "saving", // מגדיר כחיסכון
       description: goalId 
         ? `העברה לחיסכון: ${savingsGoals.find(g => g.id === goalId)?.name}` 
         : "העברה לחיסכון",
       date: new Date().toISOString(),
-      type: "income",
+      type: "income", // זה הכנסה לחיסכון
       paymentMethod: "bankTransfer"
     };
 
