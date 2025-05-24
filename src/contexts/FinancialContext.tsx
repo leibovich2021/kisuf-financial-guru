@@ -34,6 +34,7 @@ interface FinancialContextType {
   updateSettings: (newSettings: Partial<FinancialSettings>) => void;
   addSavingsGoal: (goal: Omit<SavingsGoal, 'id'>) => void;
   updateSavingsGoal: (id: string, updates: Partial<SavingsGoal>) => void;
+  deleteSavingsGoal: (id: string) => void;
   transferToSavings: (amount: number, goalId?: string) => void;
   
   // נתונים מחושבים
@@ -160,6 +161,10 @@ export const FinancialProvider = ({ children }: FinancialProviderProps) => {
     );
   };
 
+  const deleteSavingsGoal = (id: string) => {
+    setSavingsGoals(prev => prev.filter(goal => goal.id !== id));
+  };
+
   const transferToSavings = (amount: number, goalId?: string) => {
     // יצירת עסקת העברה לחיסכון
     const transferTransaction: Transaction = {
@@ -194,6 +199,7 @@ export const FinancialProvider = ({ children }: FinancialProviderProps) => {
     updateSettings,
     addSavingsGoal,
     updateSavingsGoal,
+    deleteSavingsGoal,
     transferToSavings,
     summary
   };

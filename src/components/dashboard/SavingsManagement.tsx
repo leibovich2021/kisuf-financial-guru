@@ -13,7 +13,8 @@ import {
   Plus,
   TrendingUp,
   Calendar,
-  Wallet
+  Wallet,
+  Trash2
 } from "lucide-react";
 import { formatCurrency } from "@/utils/financeUtils";
 import { useToast } from "@/hooks/use-toast";
@@ -26,7 +27,7 @@ interface SavingsManagementProps {
 
 const SavingsManagement = ({ currentSavings }: SavingsManagementProps) => {
   const { toast } = useToast();
-  const { savingsGoals, addSavingsGoal, transferToSavings } = useFinancialContext();
+  const { savingsGoals, addSavingsGoal, updateSavingsGoal, deleteSavingsGoal, transferToSavings } = useFinancialContext();
   
   const [newGoal, setNewGoal] = useState({
     name: "",
@@ -56,6 +57,16 @@ const SavingsManagement = ({ currentSavings }: SavingsManagementProps) => {
         description: `יעד "${newGoal.name}" נוצר בהצלחה`,
       });
     }
+  };
+
+  const handleDeleteSavingsGoal = (goalId: string, goalName: string) => {
+    deleteSavingsGoal(goalId);
+    
+    toast({
+      title: "יעד חיסכון נמחק",
+      description: `יעד "${goalName}" נמחק בהצלחה`,
+      variant: "destructive"
+    });
   };
 
   const addToSavingsGoal = () => {
@@ -219,40 +230,56 @@ const SavingsManagement = ({ currentSavings }: SavingsManagementProps) => {
         {/* רשימת יעדי חיסכון */}
         <div className="space-y-3">
           <h4 className="font-semibold text-base">יעדי החיסכון שלי</h4>
-          {savingsGoals.map((goal) => {
-            const progress = (goal.currentAmount / goal.targetAmount) * 100;
-            const daysLeft = Math.ceil((new Date(goal.deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-            
-            return (
-              <Card key={goal.id} className="p-4">
-                <div className="space-y-3">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h5 className="font-semibold text-sm">{goal.name}</h5>
-                      <Badge variant="outline" className="mt-1 text-xs">{goal.category}</Badge>
-                    </div>
-                    <div className="text-left">
-                      <div className="text-sm font-medium">
-                        {formatCurrency(goal.currentAmount)} / {formatCurrency(goal.targetAmount)}
+          {savingsGoals.length === 0 ? (
+            <Card className="p-4 text-center text-muted-foreground">
+              אין יעדי חיסכון. צור יעד חדש להתחלה!
+            </Card>
+          ) : (
+            savingsGoals.map((goal) => {
+              const progress = (goal.currentAmount / goal.targetAmount) * 100;
+              const daysLeft = Math.ceil((new Date(goal.deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+              
+              return (
+                <Card key={goal.id} className="p-4">
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <h5 className="font-semibold text-sm">{goal.name}</h5>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteSavingsGoal(goal.id, goal.name)}
+                            className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <Badge variant="outline" className="mt-1 text-xs">{goal.category}</Badge>
                       </div>
-                      <div className="text-xs text-muted-foreground flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {daysLeft > 0 ? `${daysLeft} ימים נותרו` : "פג תוקף"}
+                      <div className="text-left mr-4">
+                        <div className="text-sm font-medium">
+                          {formatCurrency(goal.currentAmount)} / {formatCurrency(goal.targetAmount)}
+                        </div>
+                        <div className="text-xs text-muted-foreground flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          {daysLeft > 0 ? `${daysLeft} ימים נותרו` : "פג תוקף"}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Progress value={Math.min(progress, 100)} className="h-2" />
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>{progress.toFixed(1)}% הושלם</span>
+                        <span>נותרו {formatCurrency(goal.targetAmount - goal.currentAmount)}</span>
                       </div>
                     </div>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <Progress value={Math.min(progress, 100)} className="h-2" />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>{progress.toFixed(1)}% הושלם</span>
-                      <span>נותרו {formatCurrency(goal.targetAmount - goal.currentAmount)}</span>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            );
-          })}
+                </Card>
+              );
+            })
+          )}
         </div>
       </CardContent>
     </Card>
