@@ -11,6 +11,7 @@ import FinancialInsights from "@/components/dashboard/FinancialInsights";
 import CashPaymentSummary from "@/components/dashboard/CashPaymentSummary";
 import FinancialManagement from "@/components/dashboard/FinancialManagement";
 import CalendarManager from "@/components/dashboard/CalendarManager";
+import SavingsManagement from "@/components/dashboard/SavingsManagement";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { transactions as initialTransactions, budgets as initialBudgets } from "@/data/mockData";
 import { calculateSummary, getRecentTransactions, getBudgetStatus, getCashPaymentSummary } from "@/utils/financeUtils";
@@ -31,14 +32,12 @@ const DashboardPage = () => {
   const [currentMonthData, setCurrentMonthData] = useState<MonthlyData | null>(null);
   const { toast } = useToast();
   
-  // עדכון נתוני המשתמש כאשר יש שינויים
   useEffect(() => {
     if (currentUser) {
       userService.saveUserData(currentUser.id, { transactions, budgets });
     }
   }, [transactions, budgets, currentUser]);
   
-  // השתמש בנתונים של החודש הנוכחי אם זמינים, אחרת השתמש בנתונים הכלליים
   const activeTransactions = currentMonthData?.transactions || transactions;
   const activeBudgets = currentMonthData?.budgets || budgets;
   
@@ -53,10 +52,8 @@ const DashboardPage = () => {
   };
 
   const handleDeleteTransaction = (transactionId: string) => {
-    // עדכן את העסקאות הראשיות
     setTransactions(prev => prev.filter(t => t.id !== transactionId));
     
-    // אם יש נתוני חודש נוכחי, עדכן גם אותם
     if (currentMonthData) {
       setCurrentMonthData(prev => {
         if (!prev) return prev;
@@ -73,7 +70,6 @@ const DashboardPage = () => {
   const handleTransferToSavings = (amount: number) => {
     if (amount <= 0) return;
     
-    // יצירת עסקת הוצאה - העברה לחיסכון
     const transferTransaction: Transaction = {
       id: Date.now().toString(),
       amount: amount,
@@ -84,7 +80,6 @@ const DashboardPage = () => {
       paymentMethod: "bankTransfer"
     };
 
-    // יצירת עסקת חיסכון
     const savingTransaction: Transaction = {
       id: (Date.now() + 1).toString(),
       amount: amount,
@@ -212,8 +207,8 @@ const DashboardPage = () => {
         <QuickActions onAddTransaction={openTransactionForm} />
       </div>
       
-      {/* תוכן ראשי */}
-      <div className="grid gap-6 grid-cols-1 xl:grid-cols-3 mb-8 animate-fade-in">
+      {/* תוכן ראשי עם עמודת חסכונות */}
+      <div className="grid gap-6 grid-cols-1 xl:grid-cols-4 mb-8 animate-fade-in">
         <div className="xl:col-span-2 space-y-6">
           <RecentTransactions 
             transactions={recentTransactions} 
@@ -231,6 +226,14 @@ const DashboardPage = () => {
           />
           <ExpensesByCategory transactions={activeTransactions} />
           <BudgetProgress budgets={budgetStatus} />
+        </div>
+
+        {/* עמודת ניהול חסכונות חדשה */}
+        <div className="space-y-6">
+          <SavingsManagement 
+            currentSavings={summary.totalSaved}
+            onAddSavingsTransaction={handleAddTransaction}
+          />
         </div>
       </div>
     </AppLayout>
