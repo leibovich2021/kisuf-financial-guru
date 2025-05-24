@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import SummaryCard from "@/components/dashboard/SummaryCard";
 import RecentTransactions from "@/components/dashboard/RecentTransactions";
@@ -18,11 +17,23 @@ import { Transaction } from "@/types";
 import { MonthlyData } from "@/types/calendar";
 import TransactionForm from "@/components/transactions/TransactionForm";
 import { Wallet, CreditCard, ArrowUp, ArrowDown, Sparkles } from "lucide-react";
+import { userService } from "@/services/userService";
 
 const DashboardPage = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
-  const [budgets, setBudgets] = useState(initialBudgets);
+  // קבלת נתוני המשתמש הנוכחי
+  const currentUser = userService.getCurrentUser();
+  const userData = currentUser ? userService.getUserData(currentUser.id) : { transactions: [], budgets: [] };
+  
+  const [transactions, setTransactions] = useState<Transaction[]>(userData.transactions);
+  const [budgets, setBudgets] = useState(userData.budgets);
   const [currentMonthData, setCurrentMonthData] = useState<MonthlyData | null>(null);
+  
+  // עדכון נתוני המשתמש כאשר יש שינויים
+  useEffect(() => {
+    if (currentUser) {
+      userService.saveUserData(currentUser.id, { transactions, budgets });
+    }
+  }, [transactions, budgets, currentUser]);
   
   // השתמש בנתונים של החודש הנוכחי אם זמינים, אחרת השתמש בנתונים הכלליים
   const activeTransactions = currentMonthData?.transactions || transactions;
@@ -34,7 +45,8 @@ const DashboardPage = () => {
   const cashSummary = getCashPaymentSummary(activeTransactions);
   
   const handleAddTransaction = (newTransaction: Transaction) => {
-    setTransactions([...transactions, newTransaction]);
+    const updatedTransactions = [...transactions, newTransaction];
+    setTransactions(updatedTransactions);
   };
 
   const handleDeleteTransaction = (transactionId: string) => {

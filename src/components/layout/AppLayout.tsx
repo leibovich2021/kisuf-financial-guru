@@ -1,4 +1,3 @@
-
 import { ReactNode, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -17,6 +16,7 @@ import {
 import { Calculator, Wallet, BarChart3, Settings, CreditCard, LogOut } from "lucide-react";
 import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { userService } from "@/services/userService";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -29,6 +29,8 @@ const AppSidebarContent = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
+  const currentUser = userService.getCurrentUser();
+  
   const menuItems = [
     { path: "/dashboard", name: "לוח מחוונים", icon: BarChart3 },
     { path: "/transactions", name: "עסקאות", icon: Wallet },
@@ -40,14 +42,14 @@ const AppSidebarContent = () => {
   const isActive = (path: string) => location.pathname === path;
   
   const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
+    userService.logout();
     
     toast({
       title: "התנתקת מהמערכת",
-      description: "מועבר לדף ההתחברות",
+      description: "מועבר לדף בחירת המשתמש",
     });
     
-    navigate("/");
+    navigate("/users");
   };
   
   return (
@@ -56,7 +58,12 @@ const AppSidebarContent = () => {
       <SidebarContent className="pb-6">
         <div className={`flex h-16 items-center px-4 font-semibold ${!collapsed ? "justify-center" : ""}`}>
           {!collapsed ? (
-            <span className="text-lg text-primary font-bold">ניהול כספים</span>
+            <div className="text-center">
+              <span className="text-lg text-primary font-bold block">ניהול כספים</span>
+              {currentUser && (
+                <span className="text-sm text-muted-foreground">{currentUser.displayName}</span>
+              )}
+            </div>
           ) : (
             <Wallet className="h-6 w-6 text-primary" />
           )}
