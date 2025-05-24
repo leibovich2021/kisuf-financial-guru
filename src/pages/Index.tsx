@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import SummaryCard from "@/components/dashboard/SummaryCard";
@@ -9,9 +8,10 @@ import PaymentCard from "@/components/dashboard/PaymentCard";
 import StatisticsCard from "@/components/dashboard/StatisticsCard";
 import QuickActions from "@/components/dashboard/QuickActions";
 import FinancialInsights from "@/components/dashboard/FinancialInsights";
+import CashPaymentSummary from "@/components/dashboard/CashPaymentSummary";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { transactions as initialTransactions, budgets as initialBudgets } from "@/data/mockData";
-import { calculateSummary, getRecentTransactions, getBudgetStatus } from "@/utils/financeUtils";
+import { calculateSummary, getRecentTransactions, getBudgetStatus, getCashPaymentSummary } from "@/utils/financeUtils";
 import { Transaction } from "@/types";
 import TransactionForm from "@/components/transactions/TransactionForm";
 import { Wallet, CreditCard, ArrowUp, ArrowDown, Sparkles } from "lucide-react";
@@ -23,6 +23,7 @@ const DashboardPage = () => {
   const summary = calculateSummary(transactions);
   const recentTransactions = getRecentTransactions(transactions);
   const budgetStatus = getBudgetStatus(budgets, transactions);
+  const cashSummary = getCashPaymentSummary(transactions);
   
   const handleAddTransaction = (newTransaction: Transaction) => {
     setTransactions([...transactions, newTransaction]);
@@ -108,6 +109,12 @@ const DashboardPage = () => {
         </div>
         
         <div className="space-y-6">
+          <CashPaymentSummary 
+            totalCashPayments={cashSummary.totalCashPayments}
+            cashTransactionsCount={cashSummary.cashTransactionsCount}
+            averageCashPayment={cashSummary.averageCashPayment}
+            topCashCategories={cashSummary.topCashCategories}
+          />
           <ExpensesByCategory transactions={transactions} />
           <BudgetProgress budgets={budgetStatus} />
           <PaymentCard />

@@ -1,4 +1,3 @@
-
 import { Transaction, Category, Budget, Summary } from "../types";
 import { categories, transactions } from "../data/mockData";
 
@@ -72,4 +71,40 @@ export const getBudgetStatus = (budgets: Budget[], transactions: Transaction[]):
       spent
     };
   });
+};
+
+export const getCashPaymentSummary = (transactions: Transaction[]): {
+  totalCashPayments: number;
+  cashTransactionsCount: number;
+  averageCashPayment: number;
+  topCashCategories: { category: string; amount: number }[];
+} => {
+  const cashTransactions = transactions.filter(t => t.paymentMethod === "cash");
+  
+  const totalCashPayments = cashTransactions.reduce((sum, t) => sum + t.amount, 0);
+  const cashTransactionsCount = cashTransactions.length;
+  const averageCashPayment = cashTransactionsCount > 0 ? totalCashPayments / cashTransactionsCount : 0;
+  
+  // חישוב קטגוריות מובילות בתשלום מזומן
+  const categoryTotals: Record<string, number> = {};
+  
+  cashTransactions.forEach(transaction => {
+    const categoryName = getCategoryNameById(transaction.category);
+    if (!categoryTotals[categoryName]) {
+      categoryTotals[categoryName] = 0;
+    }
+    categoryTotals[categoryName] += transaction.amount;
+  });
+  
+  const topCashCategories = Object.entries(categoryTotals)
+    .map(([category, amount]) => ({ category, amount }))
+    .sort((a, b) => b.amount - a.amount)
+    .slice(0, 3);
+  
+  return {
+    totalCashPayments,
+    cashTransactionsCount,
+    averageCashPayment,
+    topCashCategories
+  };
 };
