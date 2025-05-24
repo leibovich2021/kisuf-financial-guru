@@ -5,7 +5,6 @@ import CashPaymentSummary from "./CashPaymentSummary";
 import ExpensesByCategory from "./ExpensesByCategory";
 import BudgetProgress from "./BudgetProgress";
 import SavingsManagement from "./SavingsManagement";
-import DailyWeeklyBudget from "./DailyWeeklyBudget";
 import { Transaction, Budget } from "@/types";
 
 interface DashboardContentProps {
@@ -34,17 +33,6 @@ const DashboardContent = ({
 }: DashboardContentProps) => {
   return (
     <div className="space-y-8 animate-fade-in">
-      {/* תקציב יומי ושבועי באמצע */}
-      <div className="flex justify-center">
-        <div className="w-full max-w-4xl">
-          <DailyWeeklyBudget 
-            budgets={budgetStatus} 
-            transactions={activeTransactions}
-          />
-        </div>
-      </div>
-
-      {/* שאר התוכן */}
       <div className="grid gap-6 grid-cols-1 xl:grid-cols-4">
         <div className="xl:col-span-2 space-y-6">
           <RecentTransactions 

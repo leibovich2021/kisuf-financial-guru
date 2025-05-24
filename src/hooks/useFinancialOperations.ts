@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from 'react';
 import { Transaction, Budget } from '@/types';
 import { FinancialSettings, SavingsGoal, FinancialSummary } from '@/types/financial';
@@ -76,6 +75,26 @@ export const useFinancialOperations = () => {
     setTransactions(prev => prev.filter(t => t.id !== id));
   };
 
+  const addBudget = (budget: Omit<Budget, 'id'>) => {
+    const newBudget: Budget = {
+      ...budget,
+      id: Date.now().toString()
+    };
+    setBudgets(prev => [...prev, newBudget]);
+  };
+
+  const updateBudget = (id: string, updates: Partial<Budget>) => {
+    setBudgets(prev => 
+      prev.map(budget => 
+        budget.id === id ? { ...budget, ...updates } : budget
+      )
+    );
+  };
+
+  const deleteBudget = (id: string) => {
+    setBudgets(prev => prev.filter(budget => budget.id !== id));
+  };
+
   const updateSettings = (newSettings: Partial<FinancialSettings>) => {
     setSettings(prev => ({ ...prev, ...newSettings }));
   };
@@ -110,7 +129,6 @@ export const useFinancialOperations = () => {
   };
 
   const transferToSavings = (amount: number, goalId?: string) => {
-    // יצירת עסקת העברה לחיסכון
     const transferTransaction: Transaction = {
       id: Date.now().toString(),
       amount: amount,
@@ -125,7 +143,6 @@ export const useFinancialOperations = () => {
 
     addTransaction(transferTransaction);
 
-    // עדכון יעד חיסכון ספציפי אם הוגדר
     if (goalId) {
       updateSavingsGoal(goalId, { 
         currentAmount: savingsGoals.find(g => g.id === goalId)!.currentAmount + amount 
@@ -141,6 +158,9 @@ export const useFinancialOperations = () => {
     summary,
     addTransaction,
     deleteTransaction,
+    addBudget,
+    updateBudget,
+    deleteBudget,
     updateSettings,
     addSavingsGoal,
     updateSavingsGoal,
