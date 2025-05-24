@@ -14,4 +14,4 @@ export interface UserData {
 }
 
 import { Transaction, Budget } from './index';
-import { FinancialSettings } from '@/contexts/FinancialContext';
+import { FinancialSettings } from './financial';

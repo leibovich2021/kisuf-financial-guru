@@ -37,11 +37,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
-// Removed uuid import
 
 const formSchema = z.object({
   category: z.string().nonempty({ message: "יש לבחור קטגוריה" }),
@@ -70,7 +77,7 @@ const BudgetPage = () => {
 
   const handleAddBudget = (values: z.infer<typeof formSchema>) => {
     const newBudget: Budget = {
-      id: Date.now().toString(), // Using timestamp instead of uuid for unique ID
+      id: Date.now().toString(),
       category: values.category,
       amount: values.amount,
       spent: 0,
@@ -99,6 +106,26 @@ const BudgetPage = () => {
       default:
         return period;
     }
+  };
+
+  const calculateDailyBudget = (budget: Budget) => {
+    switch (budget.period) {
+      case "daily":
+        return budget.amount;
+      case "weekly":
+        return budget.amount / 7;
+      case "monthly":
+        return budget.amount / 30;
+      case "yearly":
+        return budget.amount / 365;
+      default:
+        return budget.amount / 30;
+    }
+  };
+
+  const calculateHourlyBudget = (budget: Budget) => {
+    const dailyBudget = calculateDailyBudget(budget);
+    return dailyBudget / 24;
   };
 
   return (
@@ -186,42 +213,70 @@ const BudgetPage = () => {
         </Dialog>
       </PageHeader>
       
-      <div className="mt-6 grid gap-4 grid-cols-1 md:grid-cols-2">
-        {budgetStatus.map(budget => {
-          const percentage = Math.min(Math.round((budget.spent / budget.amount) * 100), 100);
-          const remaining = budget.amount - budget.spent;
-          
-          return (
-            <Card key={budget.id}>
-              <CardHeader className="pb-2">
-                <CardTitle className="flex justify-between">
-                  <span>{getCategoryNameById(budget.category)}</span>
-                  <span className="text-sm text-muted-foreground">{getPeriodName(budget.period)}</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Progress value={percentage} className="h-2" />
-                
-                <div className="flex justify-between text-sm">
-                  <span>שימוש: {formatCurrency(budget.spent)}</span>
-                  <span>מתוך: {formatCurrency(budget.amount)}</span>
-                </div>
-                
-                <div className="flex justify-between text-sm">
-                  <span className={percentage >= 100 ? "text-money-expense" : "text-muted-foreground"}>
-                    {percentage}% נוצל
-                  </span>
-                  <span className="text-money-income">
-                    נותר: {formatCurrency(remaining)}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-        
-        {budgetStatus.length === 0 && (
-          <div className="col-span-2 text-center py-12">
+      <div className="mt-6">
+        {budgetStatus.length > 0 ? (
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-right">קטגוריה</TableHead>
+                  <TableHead className="text-right">תקופה</TableHead>
+                  <TableHead className="text-right">תקציב מקורי</TableHead>
+                  <TableHead className="text-right">תקציב יומי</TableHead>
+                  <TableHead className="text-right">תקציב שעתי</TableHead>
+                  <TableHead className="text-right">שימוש</TableHead>
+                  <TableHead className="text-right">נותר</TableHead>
+                  <TableHead className="text-right">אחוז השימוש</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {budgetStatus.map(budget => {
+                  const percentage = Math.min(Math.round((budget.spent / budget.amount) * 100), 100);
+                  const remaining = budget.amount - budget.spent;
+                  const dailyBudget = calculateDailyBudget(budget);
+                  const hourlyBudget = calculateHourlyBudget(budget);
+                  
+                  return (
+                    <TableRow key={budget.id}>
+                      <TableCell className="font-medium text-right">
+                        {getCategoryNameById(budget.category)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {getPeriodName(budget.period)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {formatCurrency(budget.amount)}
+                      </TableCell>
+                      <TableCell className="text-right text-blue-600 font-medium">
+                        {formatCurrency(dailyBudget)}
+                      </TableCell>
+                      <TableCell className="text-right text-green-600 font-medium">
+                        {formatCurrency(hourlyBudget)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {formatCurrency(budget.spent)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <span className="text-money-income">
+                          {formatCurrency(remaining)}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center gap-2">
+                          <Progress value={percentage} className="h-2 flex-1" />
+                          <span className={percentage >= 100 ? "text-money-expense" : "text-muted-foreground"}>
+                            {percentage}%
+                          </span>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+        ) : (
+          <div className="text-center py-12">
             <p className="text-muted-foreground mb-4">עדיין אין תקציבים. הוסף תקציב חדש כדי להתחיל לעקוב אחר ההוצאות שלך.</p>
             <Button onClick={() => setOpen(true)}>הוסף תקציב</Button>
           </div>
