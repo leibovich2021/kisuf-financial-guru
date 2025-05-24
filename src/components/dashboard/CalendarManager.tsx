@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -200,39 +199,6 @@ const CalendarManager = ({ transactions, budgets, onMonthChange }: CalendarManag
             <div className="text-lg font-bold text-red-600">
               ₪{currentMonthData.summary.totalExpense.toLocaleString()}
             </div>
-          </div>
-        </div>
-
-        {/* חודשים זמינים */}
-        <div className="space-y-2">
-          <h4 className="text-sm font-medium text-muted-foreground">חודשים עם נתונים:</h4>
-          <div className="flex flex-wrap gap-2">
-            {Object.keys(calendarState.monthlyData)
-              .sort()
-              .reverse()
-              .slice(0, 6)
-              .map(month => {
-                const monthData = calendarState.monthlyData[month];
-                const isActive = month === calendarState.currentMonth;
-                const monthDate = new Date(month + '-01');
-                
-                return (
-                  <Button
-                    key={month}
-                    variant={isActive ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => switchToMonth(month)}
-                    className="text-xs"
-                  >
-                    {format(monthDate, 'MMM yy', { locale: he })}
-                    {monthData.transactions.length > 0 && (
-                      <Badge variant="secondary" className="mr-1 h-4 text-xs">
-                        {monthData.transactions.length}
-                      </Badge>
-                    )}
-                  </Button>
-                );
-              })}
           </div>
         </div>
       </CardContent>
