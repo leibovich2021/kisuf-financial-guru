@@ -4,7 +4,6 @@ import DashboardHeader from "./DashboardHeader";
 import DashboardSummaryCards from "./DashboardSummaryCards";
 import DashboardStatistics from "./DashboardStatistics";
 import DashboardContent from "./DashboardContent";
-import FinancialManagement from "./FinancialManagement";
 import CalendarManager from "./CalendarManager";
 import QuickActions from "./QuickActions";
 import { useFinancialContext } from "@/contexts/FinancialContext";
@@ -43,14 +42,6 @@ const DashboardContainer = () => {
   const handleMonthChange = (month: string, monthlyData: MonthlyData) => {
     setCurrentMonthData(monthlyData);
   };
-
-  const handleUpdateFinancials = (income: number, expenses: number, savings: number) => {
-    updateSettings({
-      monthlyIncomeGoal: income,
-      monthlyExpenseLimit: expenses,
-      monthlySavingsGoal: savings
-    });
-  };
   
   return (
     <>
@@ -68,15 +59,6 @@ const DashboardContainer = () => {
         summary={activeSummary}
         onTransferToSavings={transferToSavings}
       />
-
-      <div className="mb-8 animate-fade-in">
-        <FinancialManagement
-          currentIncome={settings.monthlyIncomeGoal}
-          currentExpenses={settings.monthlyExpenseLimit}
-          currentSavings={settings.monthlySavingsGoal}
-          onUpdateFinancials={handleUpdateFinancials}
-        />
-      </div>
 
       <DashboardStatistics summary={activeSummary} />
 
