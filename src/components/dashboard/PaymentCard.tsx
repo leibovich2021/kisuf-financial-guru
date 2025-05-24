@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CreditCard, Crown, Zap, Star, Check } from "lucide-react";
+import { CreditCard, Crown, Zap, Star, Check, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PaymentPlan {
@@ -48,8 +48,8 @@ const plans: PaymentPlan[] = [
 ];
 
 const PaymentCard = () => {
-  const handlePlanSelect = (planId: string) => {
-    console.log(`Selected plan: ${planId}`);
+  const handlePlanSelect = (planId: string, paymentMethod: 'credit' | 'cash') => {
+    console.log(`Selected plan: ${planId} with payment method: ${paymentMethod}`);
     // כאן נוסיף את הלוגיקה לתשלום
   };
 
@@ -70,12 +70,11 @@ const PaymentCard = () => {
             <div
               key={plan.id}
               className={cn(
-                "relative p-4 rounded-xl border-2 transition-all duration-300 hover:shadow-md cursor-pointer",
+                "relative p-4 rounded-xl border-2 transition-all duration-300 hover:shadow-md",
                 plan.popular 
                   ? "border-purple-300 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-950/20 dark:to-blue-950/20" 
                   : "border-border hover:border-primary/30"
               )}
-              onClick={() => handlePlanSelect(plan.id)}
             >
               {plan.popular && (
                 <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-500 to-blue-500 text-white">
@@ -108,16 +107,27 @@ const PaymentCard = () => {
                 ))}
               </ul>
               
-              <Button 
-                className={cn(
-                  "w-full bg-gradient-to-r text-white font-medium",
-                  plan.color,
-                  "hover:opacity-90 transition-opacity"
-                )}
-              >
-                <CreditCard className="h-4 w-4 ml-2" />
-                בחר תוכנית
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  className={cn(
+                    "flex-1 bg-gradient-to-r text-white font-medium",
+                    plan.color,
+                    "hover:opacity-90 transition-opacity"
+                  )}
+                  onClick={() => handlePlanSelect(plan.id, 'credit')}
+                >
+                  <CreditCard className="h-4 w-4 ml-2" />
+                  תשלום באשראי
+                </Button>
+                <Button 
+                  variant="outline"
+                  className="flex-1 border-2 hover:bg-green-50 dark:hover:bg-green-950/20"
+                  onClick={() => handlePlanSelect(plan.id, 'cash')}
+                >
+                  <Wallet className="h-4 w-4 ml-2" />
+                  תשלום במזומן
+                </Button>
+              </div>
             </div>
           ))}
         </div>
