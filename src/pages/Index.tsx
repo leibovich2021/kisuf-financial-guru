@@ -36,6 +36,24 @@ const DashboardPage = () => {
   const handleAddTransaction = (newTransaction: Transaction) => {
     setTransactions([...transactions, newTransaction]);
   };
+
+  const handleDeleteTransaction = (transactionId: string) => {
+    // עדכן את העסקאות הראשיות
+    setTransactions(prev => prev.filter(t => t.id !== transactionId));
+    
+    // אם יש נתוני חודש נוכחי, עדכן גם אותם
+    if (currentMonthData) {
+      setCurrentMonthData(prev => {
+        if (!prev) return prev;
+        const updatedTransactions = prev.transactions.filter(t => t.id !== transactionId);
+        return {
+          ...prev,
+          transactions: updatedTransactions,
+          summary: calculateSummary(updatedTransactions)
+        };
+      });
+    }
+  };
   
   const openTransactionForm = () => {
     const addButton = document.querySelector('[data-testid="add-transaction-button"]');
@@ -147,7 +165,10 @@ const DashboardPage = () => {
       {/* תוכן ראשי */}
       <div className="grid gap-6 grid-cols-1 xl:grid-cols-3 mb-8 animate-fade-in">
         <div className="xl:col-span-2 space-y-6">
-          <RecentTransactions transactions={recentTransactions} />
+          <RecentTransactions 
+            transactions={recentTransactions} 
+            onDeleteTransaction={handleDeleteTransaction}
+          />
           <FinancialInsights />
         </div>
         
