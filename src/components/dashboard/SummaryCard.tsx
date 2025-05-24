@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { PiggyBank } from "lucide-react";
 import { formatCurrency } from "@/utils/financeUtils";
+import { useToast } from "@/hooks/use-toast";
 
 interface SummaryCardProps {
   title: string;
@@ -24,6 +25,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
 }) => {
   const [transferAmount, setTransferAmount] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { toast } = useToast();
 
   const getColorByType = () => {
     switch (type) {
@@ -57,6 +59,11 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
       onTransferToSavings(amount);
       setTransferAmount("");
       setIsDialogOpen(false);
+      
+      toast({
+        title: "הועבר לחיסכון",
+        description: `${formatCurrency(amount)} הועברו לחיסכון בהצלחה`,
+      });
     }
   };
 

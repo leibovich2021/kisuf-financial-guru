@@ -10,7 +10,8 @@ export interface User {
 export interface UserData {
   transactions: Transaction[];
   budgets: Budget[];
-  settings?: any;
+  settings?: FinancialSettings;
 }
 
 import { Transaction, Budget } from './index';
+import { FinancialSettings } from '@/contexts/FinancialContext';

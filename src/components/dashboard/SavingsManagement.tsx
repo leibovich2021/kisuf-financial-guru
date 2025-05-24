@@ -16,57 +16,18 @@ import {
   Wallet
 } from "lucide-react";
 import { formatCurrency } from "@/utils/financeUtils";
-import { Transaction } from "@/types";
 import { useToast } from "@/hooks/use-toast";
-
-interface SavingsGoal {
-  id: string;
-  name: string;
-  targetAmount: number;
-  currentAmount: number;
-  deadline: string;
-  category: string;
-  color: string;
-}
+import { useFinancialContext } from "@/contexts/FinancialContext";
 
 interface SavingsManagementProps {
   currentSavings: number;
-  onAddSavingsTransaction: (transaction: Transaction) => void;
+  onAddSavingsTransaction: (transaction: any) => void;
 }
 
-const SavingsManagement = ({ currentSavings, onAddSavingsTransaction }: SavingsManagementProps) => {
+const SavingsManagement = ({ currentSavings }: SavingsManagementProps) => {
   const { toast } = useToast();
+  const { savingsGoals, addSavingsGoal, transferToSavings } = useFinancialContext();
   
-  const [savingsGoals, setSavingsGoals] = useState<SavingsGoal[]>([
-    {
-      id: "1",
-      name: "נסיעה לחו״ל",
-      targetAmount: 15000,
-      currentAmount: 8500,
-      deadline: "2024-12-31",
-      category: "נסיעות",
-      color: "from-blue-500 to-cyan-500"
-    },
-    {
-      id: "2", 
-      name: "קרן חירום",
-      targetAmount: 25000,
-      currentAmount: 12000,
-      deadline: "2024-08-30",
-      category: "ביטחון",
-      color: "from-green-500 to-emerald-500"
-    },
-    {
-      id: "3",
-      name: "רכב חדש",
-      targetAmount: 80000,
-      currentAmount: 25000,
-      deadline: "2025-06-30",
-      category: "רכב",
-      color: "from-purple-500 to-pink-500"
-    }
-  ]);
-
   const [newGoal, setNewGoal] = useState({
     name: "",
     targetAmount: "",
@@ -77,32 +38,22 @@ const SavingsManagement = ({ currentSavings, onAddSavingsTransaction }: SavingsM
   const [depositAmount, setDepositAmount] = useState("");
   const [selectedGoalId, setSelectedGoalId] = useState("");
 
-  const addSavingsGoal = () => {
+  const handleAddSavingsGoal = () => {
     if (newGoal.name && newGoal.targetAmount && newGoal.deadline) {
-      const colors = [
-        "from-blue-500 to-cyan-500",
-        "from-green-500 to-emerald-500",
-        "from-purple-500 to-pink-500",
-        "from-orange-500 to-red-500",
-        "from-indigo-500 to-purple-500"
-      ];
-      
-      const goal: SavingsGoal = {
-        id: Date.now().toString(),
+      addSavingsGoal({
         name: newGoal.name,
         targetAmount: Number(newGoal.targetAmount),
         currentAmount: 0,
         deadline: newGoal.deadline,
         category: newGoal.category || "כללי",
-        color: colors[Math.floor(Math.random() * colors.length)]
-      };
+        color: "from-blue-500 to-cyan-500"
+      });
       
-      setSavingsGoals([...savingsGoals, goal]);
       setNewGoal({ name: "", targetAmount: "", deadline: "", category: "" });
       
       toast({
         title: "יעד חיסכון נוסף",
-        description: `יעד "${goal.name}" נוצר בהצלחה`,
+        description: `יעד "${newGoal.name}" נוצר בהצלחה`,
       });
     }
   };
@@ -110,27 +61,7 @@ const SavingsManagement = ({ currentSavings, onAddSavingsTransaction }: SavingsM
   const addToSavingsGoal = () => {
     const amount = Number(depositAmount);
     if (amount > 0 && selectedGoalId) {
-      // עדכון יעד החיסכון
-      setSavingsGoals(goals => 
-        goals.map(goal => 
-          goal.id === selectedGoalId 
-            ? { ...goal, currentAmount: goal.currentAmount + amount }
-            : goal
-        )
-      );
-
-      // יצירת עסקת חיסכון
-      const savingTransaction: Transaction = {
-        id: Date.now().toString(),
-        amount: amount,
-        category: "saving",
-        description: `הפקדה ליעד: ${savingsGoals.find(g => g.id === selectedGoalId)?.name}`,
-        date: new Date().toISOString(),
-        type: "income",
-        paymentMethod: "bankTransfer"
-      };
-
-      onAddSavingsTransaction(savingTransaction);
+      transferToSavings(amount, selectedGoalId);
       
       setDepositAmount("");
       setSelectedGoalId("");
@@ -234,7 +165,7 @@ const SavingsManagement = ({ currentSavings, onAddSavingsTransaction }: SavingsM
                     placeholder="רכב, נסיעות, בית..."
                   />
                 </div>
-                <Button onClick={addSavingsGoal} className="w-full">
+                <Button onClick={handleAddSavingsGoal} className="w-full">
                   הוסף יעד
                 </Button>
               </div>
