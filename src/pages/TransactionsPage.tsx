@@ -1,8 +1,7 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { transactions as initialTransactions } from "@/data/mockData";
 import TransactionForm from "@/components/transactions/TransactionForm";
 import { Transaction } from "@/types";
 import { formatCurrency, getCategoryNameById } from "@/utils/financeUtils";
@@ -40,16 +39,29 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { userService } from "@/services/userService";
 
 const TransactionsPage = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
+  // קבלת נתוני המשתמש הנוכחי
+  const currentUser = userService.getCurrentUser();
+  const userData = currentUser ? userService.getUserData(currentUser.id) : { transactions: [], budgets: [] };
+  
+  const [transactions, setTransactions] = useState<Transaction[]>(userData.transactions);
   const [filter, setFilter] = useState<string>("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [paymentFilter, setPaymentFilter] = useState<string>("all");
   const { toast } = useToast();
   
+  // עדכון נתוני המשתמש כאשר יש שינויים
+  useEffect(() => {
+    if (currentUser) {
+      userService.saveUserData(currentUser.id, { transactions, budgets: userData.budgets });
+    }
+  }, [transactions, currentUser]);
+  
   const handleAddTransaction = (newTransaction: Transaction) => {
-    setTransactions([...transactions, newTransaction]);
+    const updatedTransactions = [...transactions, newTransaction];
+    setTransactions(updatedTransactions);
   };
 
   const handleDeleteTransaction = (transactionId: string) => {
